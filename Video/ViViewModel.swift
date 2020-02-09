@@ -19,6 +19,7 @@ class ViViewModel: NSObject {
     private var playerItem : AVPlayerItem?
     private var player : AVPlayer?
     private var avLayer : AVPlayerLayer?
+    private var imageGenerator : AVAssetImageGenerator?
     
     private let Screen_width = UIScreen.main.bounds.size.width
     private let Screen_height = UIScreen.main.bounds.size.height
@@ -44,6 +45,10 @@ class ViViewModel: NSObject {
         
         playerItem?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         self.observe(player: player!)
+        
+        let asset = AVAsset(url: url!)
+        imageGenerator = AVAssetImageGenerator(asset: asset)
+        
         return avLayer!
     }
     
@@ -105,6 +110,8 @@ class ViViewModel: NSObject {
         item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         self.playerItem = item
         
+        let asset = AVAsset(url: url!)
+        imageGenerator = AVAssetImageGenerator(asset: asset)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -130,14 +137,12 @@ class ViViewModel: NSObject {
     }
     
     func playAndPause(button : UIButton){
-        if player?.rate == 1.0 {
-            button.isSelected = false
-        }
         if button.isSelected {
-            player?.play()
+            player?.rate = speed!
         }else{
             player?.pause()
         }
+        button.isSelected = !button.isSelected
     }
     
     func getDeviceOrientation() -> UIDeviceOrientation {
@@ -181,21 +186,27 @@ class ViViewModel: NSObject {
     
     func screenShot(button : UIButton) -> UIImage {
         let currentTime = player?.currentTime()
-        let asset = AVAsset(url: url!)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        let imageRef = try! imageGenerator.copyCGImage(at: currentTime!, actualTime: nil)
+        print(CMTimeGetSeconds(currentTime!))
+        let imageRef = try! imageGenerator!.copyCGImage(at: currentTime!, actualTime: nil)
+        print(imageRef)
         let image = UIImage(cgImage: imageRef)
+        print(image)
         return image
     }
     
-    func speed(button : UIButton) {
+    func changeSpeedWithPlayBtnIsSelector(button : UIButton, isSelector : Bool) {
         if button.isSelected {
-            player?.rate = 1.0
             self.speed = 1.0
         }else {
-            player?.rate = 2.0
             self.speed = 2.0
         }
+        
+        if isSelector { // 此时已经暂停
+            
+        } else {
+            player?.rate = speed!
+        }
+        
         button.isSelected = !button.isSelected
     }
     

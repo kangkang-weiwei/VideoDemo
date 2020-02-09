@@ -10,6 +10,12 @@
 //  隐藏videoView（定时器，定时5秒之后消失，单击也隐藏）
 //  试试缓存，边播放变缓存
 
+//  code: -999
+//  产生原因
+//  1.无效的SSL
+//  2.确保你没有取消请求
+//  3.取消异步加载时。一个Web Kit framework的delegate将收到-999，在执行取消操作在加载资源时
+
 
 import UIKit
 import SnapKit
@@ -18,7 +24,7 @@ class ViewController: UIViewController,UITableViewDataSource, UITableViewDelegat
     var view1 : ViView?
     var model1 : ViModel?
     var viewModel : ViViewModel?
-    var linkArray : NSArray?
+    var linkArray : NSMutableArray?
     
     
     override func viewDidLoad() {
@@ -39,13 +45,12 @@ class ViewController: UIViewController,UITableViewDataSource, UITableViewDelegat
         view1?.buttonClickBlock = { button in
             if button.tag == 101 {    //暂停按钮
                 self.viewModel?.playAndPause(button: button)
-                button.isSelected = !button.isSelected
             }else if button.tag == 102 {    //旋转按钮
                 self.viewModel?.rotation(button: button, lockBtnIsSelector: self.view1!.videoView!.lockBtn!.isSelected)
             }else if button.tag == 103 {    //截图按钮
                 self.view1?.photoImageView?.image = self.viewModel?.screenShot(button: button)
             }else if button.tag == 104 {    //倍速按钮
-                self.viewModel?.speed(button: button)
+                self.viewModel?.changeSpeedWithPlayBtnIsSelector(button: button, isSelector: self.view1!.videoView!.pauseBtn!.isSelected)
             }else if button.tag == 105 {    //锁屏按钮
                 self.viewModel?.lock(button: button)
             }

@@ -22,7 +22,7 @@ class ViView: UIView{
     
     var buttonClickBlock:((UIButton) -> ())?
     
-    
+    //    MARK: - Public
     func initWithAVLayer(avPlayerlayer : AVPlayerLayer) {
         avLayer = AVPlayerLayer.init()
         self.avLayer = avPlayerlayer
@@ -51,18 +51,19 @@ class ViView: UIView{
         if videoView!.lockBtn!.isSelected {
             return
         }
+        
+        let currentFrame : CGRect!
         if videoView!.rotateBtn!.isSelected {
-            avLayer?.frame = CGRect.init(x: 0, y: 20, width: Screen_width, height: Screen_width * 9/16)
-            videoView?.frame = CGRect.init(x: 0, y: 20, width: Screen_width, height: Screen_width * 9/16)
-            videoView!.rotateBtn!.isSelected = false
+            currentFrame = CGRect(x: 0, y: 20, width: Screen_width, height: Screen_width * 9/16)
         }else {
-            let currentFrame = UIScreen.main.bounds
-            avLayer?.frame = currentFrame
-            videoView?.frame = currentFrame
-            videoView!.rotateBtn!.isSelected = true
+            currentFrame = UIScreen.main.bounds
         }
+        avLayer?.frame = currentFrame
+        videoView?.frame = currentFrame
+        videoView!.rotateBtn!.isSelected = !videoView!.rotateBtn!.isSelected
     }
     
+    //    MARK: - Action
     //按钮响应方法
     @objc func buttonClick(button : UIButton) {
         if self.buttonClickBlock != nil {
@@ -79,7 +80,8 @@ class ViView: UIView{
         }
     }
     
-    func addButtonTarget() {
+    //    MARK: - Private
+    private func addButtonTarget() {
         if videoView != nil {
             videoView?.pauseBtn?.addTarget(self, action: #selector(buttonClick(button:)), for: .touchUpInside)
             videoView?.rotateBtn?.addTarget(self, action: #selector(buttonClick(button:)), for: .touchUpInside)
@@ -118,8 +120,8 @@ class VideoView: UIView {
         self.pauseBtn = {
             let pauseBtn = UIButton.init()
             pauseBtn.tag = 101
-            pauseBtn.setTitle("暂停", for: .normal)
-            pauseBtn.setTitle("开始", for: .selected)
+            pauseBtn.setTitle("开始", for: .normal)
+            pauseBtn.setTitle("暂停", for: .selected)
             self.addSubview(pauseBtn)
             pauseBtn.snp.makeConstraints({ (make) in
                 make.left.equalTo(self).offset(5)
