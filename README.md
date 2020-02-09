@@ -509,3 +509,6 @@ NSDictionary *timeRangeDict = CFBridgingRelease(CMTimeRangeCopyAsDictionary(stru
 
 ## 手势、隐藏videoView
 - 还没写
+
+## bug
+- 不能将本地视频添加进入项目，从而不能找到绝对路径，此时项目中只有网络视频
